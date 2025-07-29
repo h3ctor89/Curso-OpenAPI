@@ -191,6 +191,37 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'       
 
+  /login:
+    post:
+      summary: Iniciar sesión (no requiere autenticación)
+      security: []       # ← Anula la seguridad global para este endpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Credenciales inválidas
+
+
 components:
   schemas:
     HelloResponse:
@@ -351,3 +382,15 @@ components:
       description: ID del producto
       schema:
         type: integer
+
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >
+        Token JWT para autenticación. Se debe enviar en el encabezado:
+        Authorization: Bearer <token>
+
+security:
+  - JWT: []
