@@ -1,0 +1,69 @@
+@baseUrl = http://localhost:3000
+### Obtener todos los productos
+GET {{baseUrl}}/v1/products
+Content-Type: application/json
+
+### Obtener un producto específico por ID
+GET http://localhost:3000/v1/products/1
+Content-Type: application/json
+
+### Crear un nuevo producto
+POST http://localhost:3000/v1/products
+Content-Type: application/json
+
+{
+    "name": "Laptop Pro X",
+    "price": 1499.99,
+    "description": "Laptop profesional con procesador Intel i9, 32GB RAM, 1TB SSD",
+    "category": "Electronics",
+    "tags": ["laptop", "profesional", "intel"],
+    "inStock": 25,
+    "specifications": {
+        "laptop1": {
+            "processor": "Intel Core i9 12th Gen",
+            "screen": "15.6 inch 4K",
+            "battery": "6000mAh",
+            "ram": "32GB",
+            "storage": "1TB SSD",
+            "os": "Windows 11 Pro"
+        }
+    },
+    "ratings": [
+        {
+            "score": 4.8,
+            "comments": "Excelente rendimiento para tareas profesionales"
+        }
+    ]
+}
+
+### Actualizar un producto existente
+PUT http://localhost:3000/v1/products/1
+Content-Type: application/json
+
+{
+    "name": "Laptop Pro X Updated",
+    "price": 1599.99,
+    "description": "Laptop profesional actualizada con procesador Intel i9, 32GB RAM, 1TB SSD",
+    "category": "Electronics",
+    "tags": ["laptop", "profesional", "intel", "premium"],
+    "inStock": 20,
+    "specifications": {
+        "laptop1": {
+            "processor": "Intel Core i9 12th Gen",
+            "screen": "15.6 inch 4K",
+            "battery": "6000mAh",
+            "ram": "32GB",
+            "storage": "1TB SSD",
+            "os": "Windows 11 Pro"
+        }
+    },
+    "ratings": [
+        {
+            "score": 4.9,
+            "comments": "Actualización mejoró significativamente el rendimiento"
+        }
+    ]
+}
+
+### Eliminar un producto
+DELETE http://localhost:3000/v1/products/1

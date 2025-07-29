@@ -1,0 +1,353 @@
+openapi: 3.1.1
+info:
+  title: API First
+  version: 1.0.0 
+  description: |-
+    This is a sample FakeAPI Store Server based on the OpenAPI 3.X specification. You can find out more about Swagger at https://swagger.io. 
+    In the third iteration of the pet store, we've switched to the design first approach. 
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code. 
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+  contact:
+    name: hector
+    email: gutierrez.h3ctor@gmail.com
+  license:
+    name: MIT
+  termsOfService: https://example.com/terms
+externalDocs:
+  description: Find out more about OpenAPI
+  url: https://github.com/h3ctor89/Curso-OpenAPI
+  x-logo:
+    url: https://raw.githubusercontent.com/h3ctor89/Curso-OpenAPI/main/apifirst/logo.png
+    altText: Logo de la API
+servers:
+  - url: http://localhost:3000/v1
+    description: version 1 de la API
+  - url: http://localhost:3000/v2
+    description: version 2 de la API
+
+tags:
+  - name: Usuarios
+    description: Operaciones relacionadas con los usuarios
+  - name: Productos
+    description: Operaciones relacionadas con los productos
+
+paths:
+  /hello:
+    get:     
+      summary: hello World
+      description: Returns a greeting message.
+      responses:
+        '200':
+          description: a successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HelloResponse'
+  /users:
+    post:
+      tags:
+        - Usuarios
+      summary: crea un nuevo usuario
+      description: Crea un nuevo usuario con los detalles proporcionados.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          $ref: '#/components/responses/UserCreated'
+
+  /users/{id}:
+    get:    
+      tags:
+        - Usuarios  
+      summary: Obtiene un usuario por ID
+      description: Devuelve los detalles de un usuario específico.
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: Detalles del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+        - Usuarios
+      summary: Actualiza un usuario por ID
+      description: Actualiza los detalles de un usuario específico.
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Usuario actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  
+  /products:
+      post:
+        tags:
+          - Productos
+        summary: Crea un nuevo producto
+        description: Crea un producto.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+        responses:
+          '201':
+            description: Producto creado exitosamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/product'
+          '400':
+            description: Datos de producto inválidos
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+      get:
+        tags:
+          - Productos
+        summary: Obtiene todos los productos
+        description: Devuelve una lista de productos.
+        responses:
+          '200':
+            description: Lista de productos
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/product'
+
+  /products/{id}:
+    get:
+      tags:
+        - Productos
+      summary: Obtiene un producto por ID
+      description: Devuelve los detalles de un producto específico.
+      parameters:
+        - $ref: '#/components/parameters/ProductIdParam'
+      responses:        
+        '200':
+          description: Detalles del producto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Productos
+      summary: Actualiza un producto por ID     
+      description: Actualiza los detalles de un producto específico.
+      parameters:   
+        - $ref: '#/components/parameters/ProductIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+      responses:        
+        '200':
+          description: Producto actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'  
+        '404':
+          $ref: '#/components/responses/NotFound'    
+    delete:
+      tags:
+        - Productos
+      summary: Elimina un producto por ID
+      description: Elimina un producto específico.
+      parameters:
+        - $ref: '#/components/parameters/ProductIdParam'
+      responses:
+        '204':
+          description: Producto eliminado exitosamente
+        '404':
+          $ref: '#/components/responses/NotFound'       
+
+components:
+  schemas:
+    HelloResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hello, World!
+      required:
+        - message
+    User:
+      type: object       
+      properties:
+        name:
+          type: string
+          minLength: 3   
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        age:
+          type: integer
+          minimum: 18
+          example: 30
+      required:
+        - name
+        - email
+        - age
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            id:
+              type: integer
+              example: "123"
+          required:
+            - id
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Recurso no encontrado
+      required:
+        - message
+    product:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1234
+        name:
+          type: string
+          example: "Samsung Galaxy S23 Ultra"
+          minimum: 3
+          maxLength: 50
+        price:
+          type: number
+          format: float
+          multipleOf: 0.01
+          minimum: 0.01
+          example: 1199.99
+        description:
+          type: string
+          maxLength: 200
+          example: "Smartphone Android con pantalla Dynamic AMOLED 2X de 6.8'', 256GB almacenamiento, 12GB RAM, cámara principal 200MP, batería 5000mAh"
+        category:
+          type: string
+          enum: [Electronics, Clothing, Home, Beauty]
+          example: "Electronics"
+        tags:
+          type: array
+          minimum: 1
+          maxItems: 5
+          items:
+            type: string
+          example: ["smartphones", "samsung", "android", "5G"]
+        inStock:
+          type: integer 
+          minimum: 0
+          example: 45
+        specifications:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              processor:
+                type: string
+              screen:
+                type: string
+              battery:
+                type: string
+              ram:
+                type: string
+              storage:
+                type: string
+              os:
+                type: string
+          example:
+            phone1:
+              processor: "Snapdragon 8 Gen 2"
+              screen: "6.8 inch Dynamic AMOLED 2X"
+              battery: "5000mAh"
+              ram: "12GB"
+              storage: "256GB"
+              os: "Android 13"
+        ratings:
+          type: array
+          items:
+            type: object
+            required:
+              - score
+              - comments
+            properties:
+              score:
+                type: number
+                format: float
+                minimum: 0.0
+                maximum: 5.0
+                example: 4.5
+              comments:
+                type: string
+                maxLength: 200
+                example: "Excelente teléfono, la calidad de la cámara es increíble y la duración de la batería supera mis expectativas"
+      required:
+        - name
+        - price
+        - category
+
+  responses:
+    UserCreated:
+      description: Usuario creado exitosamente
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserResponse'
+    NotFound:
+      description: El recurso no fue encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  parameters:
+    UserIdParam:
+      name: id
+      in: path
+      required: true
+      description: ID del usuario
+      schema:
+        type: integer
+    ProductIdParam:
+      name: id
+      in: path
+      required: true
+      description: ID del producto
+      schema:
+        type: integer
